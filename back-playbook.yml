@@ -30,20 +30,31 @@
         name: pm2
         global: yes
 
-    - name: Install backend dependencies
-      command: pip3 install -r requirements.txt
+    - name: Install venv support
+      apt:
+        name: python3-venv
+        state: present
+
+    - name: Create virtual environment
+      command: python3 -m venv venv
       args:
         chdir: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/backend
+
+      
+    - name: Install backend dependencies
+      command: venv/bin/pip install -r requirements.txt
+      args:
+        chdir: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/backend
+
 
     - name: Stop existing backend process if running
       command: pm2 delete backend
       ignore_errors: yes
 
-    - name: Start backend application
-      command: pm2 start --name backend "flask run --host=0.0.0.0"
+    - name: Run backend application
+      command: pm2 start --name backend "venv/bin/flask run --host=0.0.0.0"
       args:
         chdir: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/backend
       environment:
         FLASK_APP: app.py
         FLASK_ENV: production
-
