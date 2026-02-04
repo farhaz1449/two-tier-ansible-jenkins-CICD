@@ -8,13 +8,13 @@
 
     - name: Remove existing application repository
       file:
-        path: /home/ubuntu/two-tier-ansible-jenkins-CICD
+        path: /var/lib/jenkins/two-tier-ansible-jenkins-CICD
         state: absent
 
     - name: Clone two-tier application repository
       git:
         repo: https://github.com/farhaz1449/two-tier-ansible-jenkins-CICD.git
-        dest: /home/ubuntu/two-tier-ansible-jenkins-CICD
+        dest: /var/lib/jenkins/two-tier-ansible-jenkins-CICD
 
     - name: Install required packages
       apt:
@@ -33,7 +33,7 @@
     - name: Install backend dependencies
       command: pip3 install -r requirements.txt
       args:
-        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/backend
+        chdir: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/backend
 
     - name: Stop existing backend process if running
       command: pm2 delete backend
@@ -42,7 +42,7 @@
     - name: Start backend application
       command: pm2 start --name backend "flask run --host=0.0.0.0"
       args:
-        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/backend
+        chdir: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/backend
       environment:
         FLASK_APP: app.py
         FLASK_ENV: production
