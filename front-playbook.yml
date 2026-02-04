@@ -63,13 +63,13 @@
         state: directory
 
     # Install nodejs and npm
-    - name: Install nodejs and npm
-      apt:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - nodejs
-        - npm
+    # - name: Install nodejs and npm
+    #   apt:
+    #     name: "{{ item }}"
+    #     state: present
+    #   loop:
+    #     - nodejs  # Installed Node 14 manually using NVM or NodeSource for compatibility
+    #     - npm
 
     # Install frontend dependencies
     - name: Install frontend dependencies
