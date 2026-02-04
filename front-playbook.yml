@@ -42,6 +42,7 @@
       copy:
         src: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/frontend/default.conf
         dest: /etc/nginx/sites-enabled/default
+        remote_src: yes
 
     # Restart nginx
     - name: Restart nginx
