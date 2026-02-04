@@ -75,13 +75,13 @@
     - name: Install frontend dependencies
       command: npm install
       args:
-        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend
+        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend/
 
     # Build frontend application
     - name: Build frontend application
       command: npm run build
       args:
-        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend
+        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend/
 
     # Copy build files to nginx web root
     - name: Copy frontend build to nginx html directory
