@@ -1,0 +1,90 @@
+- hosts: frontend
+  become: true
+
+  tasks:
+    # Update apt cache
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    # Remove old application directory if exists
+    - name: Remove existing application repository
+      file:
+        path: /home/ubuntu/two-tier-ansible-jenkins-CICD
+        state: absent
+        
+    # Clone frontend repository
+    - name: Clone two-tier application repository
+      git:
+        repo: https://github.com/farhaz1449/two-tier-ansible-jenkins-CICD.git
+        dest: /home/ubuntu/two-tier-ansible-jenkins-CICD
+
+    # Install NGINX
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+
+    # Remove sites-enabled directory
+    - name: Remove sites-enabled directory
+      file:
+        path: /etc/nginx/sites-enabled
+        state: absent
+
+    # Re-create sites-enabled directory
+    - name: Re-create sites-enabled directory
+      file:
+        path: /etc/nginx/sites-enabled
+        state: directory
+
+    # Copy nginx config
+    - name: Copy nginx config to sites-enabled
+      copy:
+        src: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend/default.conf
+        dest: /etc/nginx/sites-enabled/default
+
+    # Restart nginx
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    # Remove default web root
+    - name: Remove default nginx html directory
+      file:
+        path: /var/www/html
+        state: absent
+
+    # Re-create web root
+    - name: Re-create html directory
+      file:
+        path: /var/www/html
+        state: directory
+
+    # Install nodejs and npm
+    - name: Install nodejs and npm
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nodejs
+        - npm
+
+    # Install frontend dependencies
+    - name: Install frontend dependencies
+      command: npm install
+      args:
+        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend
+
+    # Build frontend application
+    - name: Build frontend application
+      command: npm run build
+      args:
+        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend
+
+    # Copy build files to nginx web root
+    - name: Copy frontend build to nginx html directory
+      copy:
+        src: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend/build/
+        dest: /var/www/html
+        remote_src: yes
