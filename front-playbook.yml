@@ -10,14 +10,14 @@
     # Remove old application directory if exists
     - name: Remove existing application repository
       file:
-        path: /var/lib/jenkins/two-tier-ansible-jenkins-CICD
+        path: /home/ubuntu/two-tier-ansible-jenkins-CICD
         state: absent
         
     # Clone frontend repository
     - name: Clone two-tier application repository
       git:
         repo: https://github.com/farhaz1449/two-tier-ansible-jenkins-CICD.git
-        dest: /var/lib/jenkins/two-tier-ansible-jenkins-CICD
+        dest: /home/ubuntu/two-tier-ansible-jenkins-CICD
 
     # Install NGINX
     - name: Install nginx
@@ -40,7 +40,7 @@
     # Copy nginx config
     - name: Copy nginx config to sites-enabled
       copy:
-        src: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/frontend/default.conf
+        src: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend/default.conf
         dest: /etc/nginx/sites-enabled/default
         remote_src: yes
 
@@ -75,17 +75,17 @@
     - name: Install frontend dependencies
       command: npm install
       args:
-        chdir: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/frontend
+        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend
 
     # Build frontend application
     - name: Build frontend application
       command: npm run build
       args:
-        chdir: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/frontend
+        chdir: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend
 
     # Copy build files to nginx web root
     - name: Copy frontend build to nginx html directory
       copy:
-        src: /var/lib/jenkins/two-tier-ansible-jenkins-CICD/frontend/build/
+        src: /home/ubuntu/two-tier-ansible-jenkins-CICD/frontend/build/
         dest: /var/www/html
         remote_src: yes
